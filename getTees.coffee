@@ -4,35 +4,32 @@ data =
 	domains: [
 		url:'http://www.teefury.com', 
 		cssData: [
-			all: false
-		,
-			selector:'#design-view-modal-secondProduct>img', attribute:'data-original'
-		]
-	,
-		url:'http://www.qwertee.com'
-		cssData: [
-			all: true
-		,
-			selector:'div.zoom-dynamic-image', attribute:['style', 'src']
+			selector:'div[id^="design-view-modal"]>img', attribute:'data-original'
 		]
 	]
 
 imgLinks = []
 
-casper = require('casper').create()
+casper = require('casper').create({
+	verbose: true,
+	logLevel: 'debug'
+})
 #Caman = require('caman').Caman
 
 casper.start()
 casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36")
 
-callBackWarro = (cssData)->
-	elements = document.querySelectorAll(cssData.selector).getAttribute(cssData.attribute)
-
+documentInspectionCallback = (cssData)->
+	elements = document.querySelectorAll(cssData.selector)
+	links = []
 	for element in elements
-
+		links.push(element.getAttribute(cssData.attribute))
+	console.log links
+	console.log elements
+	links
 
 fetchImageLinks = (cssData) ->
-	@evaluate callBackWarro, cssData
+	@evaluate documentInspectionCallback, cssData
 
 forEachWebCallback = (domain) ->
 	casper.thenOpen domain.url, ->
@@ -40,8 +37,11 @@ forEachWebCallback = (domain) ->
 		imgLinks = domain.cssData.map fetchImageLinks, this
 
 everyImageCallback = (image) ->
+	@echo "-> "+ typeof image
 	n = image.lastIndexOf("/")
+	@echo "-> "+n
 	imgName = image.slice(n)
+	@echo "---> Image "+imgName
 	location = "images".concat(imgName)	
 	@download image, location
 	@echo "---> Image saved in "+location
