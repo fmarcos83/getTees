@@ -1,0 +1,10 @@
+{
+  "name": "getTees",
+  "version": "0.1.0",
+  "description": "App to get your daily tee designs",
+  "author": "David Del Prado <dpramar@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "caman": "4.1.x"
+  }
+}
