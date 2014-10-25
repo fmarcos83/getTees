@@ -9,6 +9,7 @@ data =
     ]
 
 imgLinks = []
+folder = "images/"
 
 casper = require('casper').create({
     verbose: true,
@@ -19,31 +20,40 @@ casper = require('casper').create({
 casper.start()
 casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36")
 
+# nodeList to array
+nLtoArray = (nL) ->
+    i = -1
+    l = nL.length
+    
+    while ++i isnt l
+      imgLinks[i] = nL[i]
+
 fetchImageLinks = (cssData) ->
-    links = @.getElementsAttribute(cssData.selector, cssData.attribute)
+    elements = @.getElementsAttribute(cssData.selector, cssData.attribute)
+    
+    nLtoArray elements
 
 forEachWebCallback = (domain) ->
     casper.thenOpen domain.url, ->
         @echo "\n> Accessing "+domain.url, 'INFO'
-        imgLinks = domain.cssData.map fetchImageLinks, this
+        domain.cssData.map fetchImageLinks, this
 
-everyImageCallback = (image) ->
-    @echo "-> Link: "+ image
-    n = image.toString().lastIndexOf("/")
-    @echo "-> Slice: "+n
-    imgName = image.toString().slice(n+1)
-    location = "images/".concat(imgName)
-    @echo "\n> Downloading "+imgName, 'INFO'
+downloadImage = (image) ->
+    n = image.lastIndexOf("/")
+    imgName = image.slice(n+1)
+    location = folder.concat(imgName)
     @download image, location
-    @echo "---> Image saved in "+location
 
 casper.on 'page.error', (msg, trace) ->
     @echo 'Error: ' + msg, 'ERROR'
+
+casper.on 'downloaded.file', (path) ->
+    @echo "> Img downloaded to "+path, 'INFO'
 
 casper.then ->
     data.domains.forEach forEachWebCallback
 
 casper.then ->
-    imgLinks.forEach everyImageCallback, casper
+    imgLinks.forEach downloadImage, casper
 
 casper.run()
