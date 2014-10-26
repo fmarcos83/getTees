@@ -6,6 +6,13 @@ data =
         cssData: [
             selector:'div[id^="design-view-modal"]>img', attribute:'data-original'
         ]
+    ,
+        url:'http://www.qwertee.com'
+        cssData: [
+            selector:'div.zoom-dynamic-image>img.dynamic-image-design', attribute:'src'
+        ,
+            selector:'div.zoom-dynamic-image>div.background', attribute:'style'
+        ]
     ]
 
 imgLinks = []
@@ -24,19 +31,29 @@ casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537
 nLtoArray = (nL) ->
     i = -1
     l = nL.length
+    array = []
     
     while ++i isnt l
-      imgLinks[i] = nL[i]
+        array[i] = nL[i]
+    array
 
 fetchImageLinks = (cssData) ->
     elements = @.getElementsAttribute(cssData.selector, cssData.attribute)
-    
-    nLtoArray elements
+    if cssData.attribute isnt 'style'
+        imgLinks = nLtoArray elements
+    else
+        # WiP. Getting the background-color since .png files
+        # have a transparent background
+        backgrounds = nLtoArray elements
+        for background in backgrounds
+            n = background.indexOf(":")
+            background = background.slice(n+2)
+            @echo background
 
 forEachWebCallback = (domain) ->
     casper.thenOpen domain.url, ->
         @echo "\n> Accessing "+domain.url, 'INFO'
-        domain.cssData.map fetchImageLinks, this
+        domain.cssData.forEach fetchImageLinks, this
 
 downloadImage = (image) ->
     n = image.lastIndexOf("/")
