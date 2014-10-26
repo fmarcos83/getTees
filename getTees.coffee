@@ -22,7 +22,6 @@ casper = require('casper').create({
     verbose: true,
     logLevel: 'debug'
 })
-#Caman = require('caman').Caman
 
 casper.start()
 casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36")
@@ -41,6 +40,7 @@ fetchImageLinks = (cssData) ->
     elements = @.getElementsAttribute(cssData.selector, cssData.attribute)
     if cssData.attribute isnt 'style'
         imgLinks = nLtoArray elements
+        imgLinks.forEach downloadImage, casper
     else
         # WiP. Getting the background-color since .png files
         # have a transparent background
@@ -69,8 +69,5 @@ casper.on 'downloaded.file', (path) ->
 
 casper.then ->
     data.domains.forEach forEachWebCallback
-
-casper.then ->
-    imgLinks.forEach downloadImage, casper
 
 casper.run()
