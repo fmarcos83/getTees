@@ -1,5 +1,7 @@
 'use strict'
 
+require 'getTee'
+
 data = 
     domains: [
         url:'http://www.teefury.com', 

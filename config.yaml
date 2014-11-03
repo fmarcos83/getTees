@@ -1,0 +1,17 @@
+domains:
+    - url: 'http://www.teefury.com'
+      cssData:
+          - selector: 'div[id^="design-view-modal"]>img'
+            attribute: 'data-original'
+    - url: 'http://www.qwertee.com'
+      cssData:
+          - selector: 'div.zoom-dynamic-image>img.dynamic-image-design'
+            attribute: 'src'
+          - selector: 'div.zoom-dynamic-image>div.background'
+            attribute: 'style'
+landing:
+    folder: './images/'
+casper:
+    verbose:   true
+    logLevel:  'debug'
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36'

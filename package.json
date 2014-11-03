@@ -5,6 +5,9 @@
   "author": "David Del Prado <dpramar@gmail.com>",
   "private": true,
   "dependencies": {
-    "caman": "4.1.x"
-  }
+    "casperjs": "^1.1.0-beta3",
+    "commander": "^2.5.0",
+    "js-yaml": "^3.2.2"
+  },
+  "bin": "./bin/getTee"
 }
